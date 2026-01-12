@@ -27,8 +27,7 @@ install:
 	sudo apt install -y --no-install-recommends \
 		ca-certificates curl \
 		python3 python3-venv python3-pip \
-		python3-picamera2 python3-opencv python3-numpy \
-		pigpio python3-pigpio; \
+		python3-picamera2 python3-opencv python3-numpy python3-pigpio; \
 	if ! command -v uv >/dev/null 2>&1; then \
 		echo "Installing uv..."; \
 		curl -LsSf https://astral.sh/uv/install.sh | sh; \
