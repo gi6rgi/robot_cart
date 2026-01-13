@@ -13,10 +13,9 @@ picam2.start()
 time.sleep(1)
 
 frame = picam2.capture_array()
-frame_bgr = cv2.cvtColor(frame, cv2.COLOR_RGB2BGR)
 
 filename = "frame.png"
-cv2.imwrite(filename, frame_bgr)
+cv2.imwrite(filename, frame)
 print(f"Saved: {filename}")
 
 picam2.stop()
