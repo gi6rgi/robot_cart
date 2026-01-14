@@ -1,7 +1,7 @@
 from pathlib import Path
 import time
 
-STOP = 1450
+STOP = 1445
 SPD  = 120
 PERIOD = 20_000_000  # ns (50 Hz)
 

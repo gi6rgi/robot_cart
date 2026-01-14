@@ -1,5 +1,10 @@
+from src import servo
+
+from time import sleep
+
+
 def main():
-    print("Hello from robot-cart!")
+    servo.run_action(servo.forward, 2, speed=80)
 
 
 if __name__ == "__main__":
