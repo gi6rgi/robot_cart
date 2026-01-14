@@ -23,22 +23,39 @@ def ch(n):
 L, R = ch(0), ch(1)  # GPIO12=pwm0, GPIO13=pwm1
 
 
-def us(dev, u): (dev/"duty_cycle").write_text(str(u*1000))
+def us(dev, u) -> None: (dev/"duty_cycle").write_text(str(u*1000))
 
 
-def stop():
-    us(L, STOP); us(R, STOP)
+def set_lr(l_us: int, r_us: int) -> None:
+    us(L, l_us)
+    us(R, r_us)
 
 
-def forward():
-    us(L, STOP + SPD)
-    us(R, STOP - SPD)
+def stop() -> None:
+    set_lr(STOP, STOP)
 
 
-def turn_left():
-    us(R, STOP - SPD)
+def forward(speed: int = SPD) -> None:
+    set_lr(STOP + speed, STOP - speed)
 
 
-def turn_right():
-    us(L, STOP + SPD)
+def backward(speed: int = SPD) -> None:
+    set_lr(STOP - speed, STOP + speed)
+
+
+def turn_left(speed: int = SPD) -> None:
+    set_lr(STOP - speed, STOP - speed)
+
+
+def turn_right(speed: int = SPD) -> None:
+    set_lr(STOP + speed, STOP + speed)
+
+
+def run_action(action_fn, seconds: float, *args, **kwargs) -> None:
+    """
+    Run an action for `seconds`, then stop.
+    """
+    action_fn(*args, **kwargs)
+    time.sleep(seconds)
+    stop()
 
