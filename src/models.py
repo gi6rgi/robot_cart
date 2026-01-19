@@ -45,6 +45,8 @@ SYSTEM_PROMPT = (
     "turn_left(), turn_right(), go_backward(duration seconds). "
     "If journey_notes and last_actions are empty - you are at the beginning of the journey. "
     "Start from looking around to find something interesting. "
+    "Add purpose to your actions. For example, if you are looking for a specific object, "
+    "you should move forward to get closer to it. "
     "1 second of moving forward is 20cm of distance. "
     "You will receive a new photo after executing all actions. "
     "Photo is taken from the front of the cart using lens with horizontal FoV ≈ 62.2 degrees. "
