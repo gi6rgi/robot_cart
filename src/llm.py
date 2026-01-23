@@ -1,4 +1,7 @@
+import mimetypes
+
 from google import genai
+from google.genai import types
 
 from src.config import settings
 from src.models import SYSTEM_PROMPT, InvokeRequest, LLMResponse
@@ -18,12 +21,17 @@ def build_prompt(request: InvokeRequest) -> str:
 
 
 def invoke(request: InvokeRequest) -> LLMResponse:
-    contents = [build_prompt(request)]
+    contents: list[str | types.Part] = [build_prompt(request)]
     print(f"LLM Invokation:\n\n{contents}")
 
     if request.image_path:
+        mime_type, _ = mimetypes.guess_type(request.image_path)
+        if mime_type is None:
+            mime_type = "image/png"
         with open(request.image_path, "rb") as image:
-            contents.append(image.read())
+            contents.append(
+                types.Part.from_bytes(data=image.read(), mime_type=mime_type)
+            )
 
     response = client.models.generate_content(
         model=settings.gemini.model,
