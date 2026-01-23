@@ -26,7 +26,9 @@ class Action(BaseModel):
         tool = info.data.get("tool")
         if tool in {ToolName.MOVE_FORWARD, ToolName.GO_BACKWARD}:
             if value is None or value <= 0:
-                raise ValueError("duration must be a positive integer for movement tools")
+                raise ValueError(
+                    "duration must be a positive integer for movement tools"
+                )
         else:
             if value is not None:
                 raise ValueError("duration is only allowed for movement tools")

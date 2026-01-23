@@ -1,7 +1,7 @@
 from google import genai
 
 from src.config import settings
-from src.models import InvokeRequest, LLMResponse, SYSTEM_PROMPT
+from src.models import SYSTEM_PROMPT, InvokeRequest, LLMResponse
 
 client = genai.Client(api_key=settings.gemini.api_key)
 
@@ -17,11 +17,12 @@ def build_prompt(request: InvokeRequest) -> str:
     return "\n\n".join(parts)
 
 
-def invoke(request: InvokeRequest, image_path: str | None = None) -> str:
+def invoke(request: InvokeRequest) -> LLMResponse:
     contents = [build_prompt(request)]
+    print(f"LLM Invokation:\n\n{contents}")
 
-    if image_path:
-        with open(image_path, "rb") as image:
+    if request.image_path:
+        with open(request.image_path, "rb") as image:
             contents.append(image.read())
 
     response = client.models.generate_content(
@@ -32,4 +33,6 @@ def invoke(request: InvokeRequest, image_path: str | None = None) -> str:
             "response_json_schema": LLMResponse.model_json_schema(),
         },
     )
-    return response.text
+
+    response = LLMResponse.model_validate_json(response.text)
+    return response

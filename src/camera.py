@@ -1,22 +1,30 @@
-from picamera2 import Picamera2
 import time
+from tkinter import NO
+
 import cv2
+from picamera2 import Picamera2
 
 SIZE = (3280, 2464)
 FORMAT = "RGB888"
 
-picam2 = Picamera2()
-config = picam2.create_preview_configuration(main={"size": SIZE, "format": FORMAT})
-picam2.configure(config)
 
-picam2.start()
-time.sleep(1)
+class Camera:
+    def __init__(self) -> None:
+        self.picam2 = Picamera2()
 
-frame = picam2.capture_array()
+    def start(self):
+        config = self.picam2.create_preview_configuration(
+            main={"size": SIZE, "format": FORMAT}
+        )
+        self.picam2.configure(config)
+        self.picam2.start()
+        time.sleep(1)
 
-filename = "frame.png"
-cv2.imwrite(filename, frame)
-print(f"Saved: {filename}")
+    def capture_photo(self, output_path: str) -> str:
+        frame = self.picam2.capture_array()
+        cv2.imwrite(output_path, frame)
+        print(f"Image saved: {output_path}")
+        return output_path
 
-picam2.stop()
-
+    def stop(self) -> None:
+        self.picam2.stop()
