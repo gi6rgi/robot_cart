@@ -14,7 +14,7 @@ def app_setup() -> None:
         settings.app.action_logs_dir,
         settings.app.image_logs_dir,
     ]:
-        os.makedirs(folder_name)
+        os.makedirs(folder_name, exist_ok=True)
 
 
 def explore(
@@ -90,6 +90,8 @@ def main() -> None:
 
     camera = Camera()
     camera.start()
+
+    run(camera=camera)
 
 
 if __name__ == "__main__":
