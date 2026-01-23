@@ -38,7 +38,12 @@ def explore(
     print(llm_response)
 
 
-def resize_image(path: str, max_side: int = 1920, output_path: str | None = None) -> str:
+def resize_image(
+    path: str,
+    max_side: int = 1024,
+    output_path: str | None = None,
+    jpeg_quality: int = 80,
+) -> str:
     image = cv2.imread(path)
     if image is None:
         raise ValueError(f"Unable to read image at {path}")
@@ -54,10 +59,17 @@ def resize_image(path: str, max_side: int = 1920, output_path: str | None = None
     resized = cv2.resize(image, (new_width, new_height), interpolation=cv2.INTER_AREA)
 
     if output_path is None:
-        root, ext = os.path.splitext(path)
-        output_path = f"{root}_small{ext}"
+        root, _ = os.path.splitext(path)
+        output_path = f"{root}_small.jpg"
 
-    cv2.imwrite(output_path, resized)
+    if output_path.lower().endswith((".jpg", ".jpeg")):
+        cv2.imwrite(
+            output_path,
+            resized,
+            [int(cv2.IMWRITE_JPEG_QUALITY), int(jpeg_quality)],
+        )
+    else:
+        cv2.imwrite(output_path, resized)
     return output_path
 
 
