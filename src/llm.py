@@ -11,6 +11,8 @@ client = genai.Client(api_key=settings.gemini.api_key)
 
 def build_prompt(request: InvokeRequest) -> str:
     parts = [SYSTEM_PROMPT]
+    if request.goal:
+        parts.append(f"\nGoal: {request.goal}\n")
     if request.journey_notes:
         notes = "\n".join(f"- {note}" for note in request.journey_notes)
         parts.append(f"Journey notes:\n{notes}")

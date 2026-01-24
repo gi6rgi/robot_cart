@@ -6,6 +6,7 @@ from pydantic import BaseModel, Field, field_validator
 class InvokeRequest(BaseModel):
     journey_notes: list[str] = Field(default_factory=list)
     last_actions: list["Action"] = Field(default_factory=list)
+    goal: str
     image_path: str | None = None
 
 
@@ -39,11 +40,14 @@ class LLMResponse(BaseModel):
     thoughts: str | None = None
     current_journey_note: str
     next_actions: list[Action]
+    goal_archived: bool = False
 
 
 SYSTEM_PROMPT = (
     "You are controlling a robot cart. Use structured JSON output that matches "
-    "the LLMResponse schema. Available tools: move_forward(duration seconds), "
+    "the LLMResponse schema. If a goal is provided, use it to guide actions and set "
+    "goal_archived=true only when the goal is clearly achieved. Available tools: "
+    "move_forward(duration seconds), "
     "turn_left(), turn_right(), go_backward(duration seconds). "
     "one turn is ~30 degrees. "
     "one second of moving forward is ~6cm of distance"
