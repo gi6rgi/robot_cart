@@ -45,6 +45,8 @@ SYSTEM_PROMPT = (
     "You are controlling a robot cart. Use structured JSON output that matches "
     "the LLMResponse schema. Available tools: move_forward(duration seconds), "
     "turn_left(), turn_right(), go_backward(duration seconds). "
+    "one turn is ~30 degrees. "
+    "one second of moving forward is ~6cm of distance"
     "If journey_notes and last_actions are empty - you are at the beginning of the journey. "
     "Start from looking around to find something interesting. "
     "Add purpose to your actions. For example, if you are looking for a specific object, "
