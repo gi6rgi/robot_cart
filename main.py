@@ -17,27 +17,62 @@ def app_setup() -> None:
         os.makedirs(folder_name, exist_ok=True)
 
 
+# TODO: move me somewhere.
+def perform_actions(actions: list[models.Action]):
+    actions_mapper = {
+        models.ToolName.MOVE_FORWARD: servo.forward,
+        models.ToolName.GO_BACKWARD: servo.backward,
+        models.ToolName.TURN_LEFT: servo.turn_left,
+        models.ToolName.TURN_RIGHT: servo.turn_right,
+    }
+    turn_seconds = 0.35
+
+    for action in actions:
+        action_fn = actions_mapper.get(action.tool)
+        if action.tool in {models.ToolName.MOVE_FORWARD, models.ToolName.GO_BACKWARD}:
+            if action.duration is None:
+                raise ValueError("duration is required for movement actions")
+            servo.run_action(action_fn, action.duration)
+        else:
+            servo.run_action(action_fn, turn_seconds)
+
+
+# TODO: move me somewhere.
 def explore(
     camera: Camera,
-    action_number: int,
-    journey_notes: list[str],
-    last_actions: list[models.Action],
+    goal: str,
+    action_number: int = 1,
 ) -> None:
-    # Temp research implementation.
-    photo_path = f"{settings.app.image_logs_dir}/{action_number}.png"
-    current_photo_path = camera.capture_photo(photo_path)
-    resized_photo_path = resize_image(current_photo_path)
+    journey_notes: list[str] = []
+    last_actions: list[models.Action] = []
 
-    llm_response = invoke(
-        request=models.InvokeRequest(
-            journey_notes=journey_notes,
-            last_actions=last_actions,
-            image_path=resized_photo_path,
+    while True:
+        # Temp research implementation.
+        photo_path = f"{settings.app.image_logs_dir}/{action_number}.png"
+        current_photo_path = camera.capture_photo(photo_path)
+        resized_photo_path = resize_image(current_photo_path)
+
+        llm_response = invoke(
+            request=models.InvokeRequest(
+                goal=goal,
+                journey_notes=journey_notes,
+                last_actions=last_actions,
+                image_path=resized_photo_path,
+            )
         )
-    )
-    print(llm_response)
+        print(llm_response)
+
+        perform_actions(llm_response.next_actions)
+        last_actions.clear()
+        last_actions.extend(llm_response.next_actions)
+        journey_notes.append(llm_response.current_journey_note)
+        action_number += 1
+
+        if llm_response.goal_archived:
+            break
 
 
+# TODO: move me somewhere.
 def resize_image(
     path: str,
     max_side: int = 1024,
@@ -73,25 +108,18 @@ def resize_image(
     return output_path
 
 
-def run(camera: Camera):
-    journey_notes: list[str] = []
-    last_actions: list[models.Action] = []
-
-    explore(
-        camera=camera,
-        action_number=1,
-        journey_notes=journey_notes,
-        last_actions=last_actions,
-    )
-
-
 def main() -> None:
+    GOAL = "find a man sitting with a laptop. What stickers do you see on the laptop?"
+
     app_setup()
 
     camera = Camera()
     camera.start()
 
-    run(camera=camera)
+    explore(
+        camera=camera,
+        goal=GOAL,
+    )
 
 
 if __name__ == "__main__":
