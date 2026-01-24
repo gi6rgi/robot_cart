@@ -60,7 +60,8 @@ def explore(
                 image_path=resized_photo_path,
             )
         )
-        print(llm_response)
+        print(llm_response.thoughts)
+        print("\n" * 3)
 
         perform_actions(llm_response.next_actions)
         last_actions.clear()

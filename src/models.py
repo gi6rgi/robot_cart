@@ -61,4 +61,4 @@ SYSTEM_PROMPT = (
     "Choose 1-3 actions per turn. After executing all actions, a new photo "
     "will be captured and provided in the next call.\n\n"
     "Return JSON only."
-)
+    )

@@ -52,7 +52,7 @@ def invoke(request: InvokeRequest) -> LLMResponse:
     for attempt in range(1, RETRIES + 1):
         try:
             contents = _build_contents(request)
-            print(f"LLM Invokation:\n\n{contents}")
+            # print(f"LLM Invokation:\n\n{contents}")
             return _generate_response(contents)
         except Exception as exc:
             last_error = exc
