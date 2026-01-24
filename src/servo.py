@@ -2,7 +2,7 @@ import time
 from pathlib import Path
 
 STOP = 1445
-SPD = 120
+SPD = 100
 PERIOD = 20_000_000  # ns (50 Hz)
 
 pwm = Path("/sys/class/pwm")
