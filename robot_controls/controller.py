@@ -41,7 +41,7 @@ class RobotController:
             try:
                 frame = self.camera.picam2.capture_array()
                 # Convert RGB to BGR for consistency with OpenCV
-                frame = cv2.cvtColor(frame, cv2.COLOR_RGB2BGR)
+                # frame = cv2.cvtColor(frame, cv2.COLOR_RGB2BGR)
                 
                 with self.frame_lock:
                     self.latest_frame = frame

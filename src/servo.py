@@ -22,9 +22,19 @@ def ch(n):
 
 L, R = ch(0), ch(1)  # GPIO12=pwm0, GPIO13=pwm1
 
+# Cache for last written values to avoid redundant writes
+_last_values = {}
+
 
 def us(dev, u) -> None:
-    (dev / "duty_cycle").write_text(str(u * 1000))
+    """Write PWM duty cycle only if value changed"""
+    # Use device path as key
+    dev_key = str(dev)
+
+    # Only write if value actually changed
+    if _last_values.get(dev_key) != u:
+        (dev / "duty_cycle").write_text(str(u * 1000))
+        _last_values[dev_key] = u
 
 
 def set_lr(l_us: int, r_us: int) -> None:
@@ -59,3 +69,4 @@ def run_action(action_fn, seconds: float, *args, **kwargs) -> None:
     action_fn(*args, **kwargs)
     time.sleep(seconds)
     stop()
+
