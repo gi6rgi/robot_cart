@@ -75,7 +75,16 @@ class RobotController:
         # Determine action based on keys
         new_action = None
         
-        if keys[pygame.K_UP]:
+        # Check for combination keys first
+        if keys[pygame.K_UP] and keys[pygame.K_LEFT]:
+            new_action = "forward_left"
+        elif keys[pygame.K_UP] and keys[pygame.K_RIGHT]:
+            new_action = "forward_right"
+        elif keys[pygame.K_DOWN] and keys[pygame.K_LEFT]:
+            new_action = "backward_left"
+        elif keys[pygame.K_DOWN] and keys[pygame.K_RIGHT]:
+            new_action = "backward_right"
+        elif keys[pygame.K_UP]:
             new_action = "forward"
         elif keys[pygame.K_DOWN]:
             new_action = "backward"
@@ -94,11 +103,23 @@ class RobotController:
                 servo.turn_left()
             elif new_action == "right":
                 servo.turn_right()
+            elif new_action == "forward_left":
+                # Move forward while turning left - one motor faster than the other
+                servo.set_lr(servo.STOP + servo.SPD, servo.STOP - servo.SPD // 2)
+            elif new_action == "forward_right":
+                # Move forward while turning right
+                servo.set_lr(servo.STOP + servo.SPD // 2, servo.STOP - servo.SPD)
+            elif new_action == "backward_left":
+                # Move backward while turning left
+                servo.set_lr(servo.STOP - servo.SPD // 2, servo.STOP + servo.SPD)
+            elif new_action == "backward_right":
+                # Move backward while turning right
+                servo.set_lr(servo.STOP - servo.SPD, servo.STOP + servo.SPD // 2)
             else:
                 servo.stop()
             
             self.current_action = new_action
-    
+
     def run(self):
         """Main control loop"""
         print("Robot Control Started!")
